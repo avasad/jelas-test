@@ -1,12 +1,16 @@
 'use strict';
+const os = require('os');
 const uuid = require('uuid');
 // Require the framework and instantiate it
 const fastify = require('fastify')({ logger: true })
 
 // Declare a route
 fastify.get('/', async (request, reply) => {
-    reply.headers({'x-request-id': uuid.v4()});
-    return { code: 0, message: 'ok' }
+    const requestId = uuid.v4();
+    const hostname = os.hostname();
+    reply.headers({'x-request-id': requestId});
+    request.log.info({hostname, requestId}, 'handling a new request');
+    return { code: 0, message: 'ok', hostname, requestId }
 })
 
 // Run the server!
